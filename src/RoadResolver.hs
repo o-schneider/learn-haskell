@@ -1,23 +1,14 @@
 module RoadResolver
   ( runOptimalPath
-  , optimalPath
-  , heathrowToLondon
   ) where
 
-runOptimalPath :: IO ()
-runOptimalPath = do
-  contents <- getContents
-  let threes = groupsOf 3 (map read $ lines contents)
-      roadSystem = map (\[a, b, c] -> Section a b c) threes
-      path = optimalPath roadSystem
-      pathString = concatMap (show . fst) path
-      pathTime = pathSum path
-  putStrLn $ "The best path to take is: " ++ pathString
-  putStrLn $ "Time taken: " ++ show pathTime
+type RoadSystem = [Section]
+
+type Path = [(Label, Int)]
 
 data Section = Section {getA :: Int, getB :: Int, getC :: Int}
 
-type RoadSystem = [Section]
+data Label = A | B | C deriving (Show)
 
 heathrowToLondon :: RoadSystem
 heathrowToLondon = [ Section 50 10 30
@@ -26,8 +17,19 @@ heathrowToLondon = [ Section 50 10 30
                    , Section 10 8 0
                    ]
 
-data Label = A | B | C deriving (Show)
-type Path = [(Label, Int)]
+runOptimalPath :: IO ()
+runOptimalPath = do
+    (path, pathTime) <- optimalPathFromInput <$> getContents
+    putStrLn $ "The best path to take is: " ++ path
+    putStrLn $ "Time taken: " ++ show pathTime
+
+optimalPathFromInput :: String -> (String, Int)
+optimalPathFromInput = (\path -> (concatMap (show . fst) path, pathSum path))
+  . optimalPath
+  . map (\[a, b, c] -> Section a b c)
+  . groupsOf 3
+  . map read
+  . lines
 
 optimalPath :: RoadSystem -> Path
 optimalPath roads = reverse
