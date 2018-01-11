@@ -3,7 +3,6 @@ module RPN
  )
  where
 
-
 -- RPN
 solveRPN :: String -> Double
 solveRPN = head . foldl rpn [] . words

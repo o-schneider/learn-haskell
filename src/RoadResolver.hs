@@ -1,6 +1,7 @@
 module RoadResolver
   ( runOptimalPath
-  ) where
+  )
+  where
 
 type RoadSystem = [Section]
 
